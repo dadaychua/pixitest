@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/pixi.min.js"></script>
+    <script src="js/pixi-spine.js"></script>
+    <script>
+        let app;
+        let cat;
+        let catHealth;
+
+        window.onload = function() {
+            app = new PIXI.Application(
+                {
+                    width: 1900,
+                    height: 900,
+                    transparent: true
+                
+                }
+            );
+
+            // catHealth = new PIXI.Container();
+            document.querySelector("#gameArea").appendChild(app.view);
+            document.querySelector("#gameArea").addEventListener("pointerdown", attack);
+            document.querySelector("#gameArea").addEventListener("pointerup", stopAttack);
+
+            
+
+        // load spine data
+        app.loader
+            .add('cat', 'examples/assets/test/Cat.json')
+            .load(onAssetsLoaded);
+
+        app.stage.interactive = true;
+        }
+
+        function onAssetsLoaded(loader, res) {
+            // create a spine boy
+            cat = new PIXI.spine.Spine(res.cat.spineData);
+
+            // set the position
+            cat.x = app.screen.width / 5;
+            cat.y = app.screen.height;
+
+            cat.scale.set(0.4);
+
+            app.stage.addChild(cat);
+
+            cat.state.setAnimation(0, 'idle', true);
+
+            // app.ticker.add(gameLoop);
+
+            // const singleAnimations = ['aim', 'death', 'jump', 'portal'];
+            // const loopAnimations = ['hoverboard', 'idle', 'run', 'shoot', 'walk'];
+            // const allAnimations = [].concat(singleAnimations, loopAnimations);
+
+            // let lastAnimation = '';
+
+            // // Press the screen to play a random animation
+            // app.stage.on('pointerdown', () => {
+            //     let animation = '';
+            //     do {
+            //         animation = allAnimations[Math.floor(Math.random() * allAnimations.length)];
+            //     } while (animation === lastAnimation);
+
+            //     spineBoyPro.state.setAnimation(0, animation, loopAnimations.includes(animation));
+
+            //     lastAnimation = animation;
+            // });
+            cat.stateData.setMix('idle', 'Attack', 0.1);
+            cat.stateData.setMix('Attack', 'idle', 0.1);
+        }
+
+        function attack()
+        {
+            cat.state.setAnimation(0, 'Attack', false);
+            cat.state.addAnimation(0, 'idle', true, 0);
+        }
+
+        function stopAttack()
+        {
+            // cat.state.setAnimation(0, 'idle', false);
+        }
+
+        // function gameLoop(delta)
+        // {
+
+        // }
+    </script>
+</head>
+
+<body style="background-image: url('/images/game-bg.png'); background-repeat: no-repeat;">
+<div id = "gameArea"></div>
+</body>
+</html>
